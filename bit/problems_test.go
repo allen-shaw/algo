@@ -57,25 +57,28 @@ func singleNumber2(nums []int) int {
 func partition(nums []int) int {
 	// idx := rand.Intn(len(nums) - 1)
 	// nums[0], nums[idx] = nums[idx], nums[0]
-	n := nums[0]
+	r := len(nums) - 1
+	n := nums[r]
 
 	i := 1
-	j := len(nums) - 1
+	j := r - 1
 
 	for i <= j {
-		for i <= j && nums[i] <= n {
+		for i < r && nums[i] <= n {
 			i++
 		}
-		for i <= j && nums[j] > n {
+		for j >= 0 && nums[j] > n {
 			j--
 		}
 		if i < j {
 			nums[i], nums[j] = nums[j], nums[i]
+			i++
+			j--
 		}
 	}
 
-	nums[0], nums[j] = nums[j], nums[0]
-	return j
+	nums[r], nums[i] = nums[i], nums[r]
+	return i
 }
 
 func TestPartition(t *testing.T) {
