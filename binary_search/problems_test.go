@@ -72,3 +72,77 @@ func TestFindPeakElement(t *testing.T) {
 	k4 := findPeakElement(nums4)
 	fmt.Println(k4)
 }
+
+// 852. 山脉数组的峰顶索引
+// https://leetcode.cn/problems/peak-index-in-a-mountain-array/
+// 符合下列属性的数组 arr 称为 山脉数组 ：
+// arr.length >= 3
+// 存在 i（0 < i < arr.length - 1）使得：
+// arr[0] < arr[1] < ... arr[i-1] < arr[i]
+// arr[i] > arr[i+1] > ... > arr[arr.length - 1]
+// 给你由整数组成的山脉数组 arr ，返回任何满足 arr[0] < arr[1] < ... arr[i - 1] < arr[i] > arr[i + 1] > ... > arr[arr.length - 1] 的下标 i 。
+
+func PeakIndexInMountainArray(arr []int) int {
+	if len(arr) < 3 {
+		return -1
+	}
+
+	l, r := 1, len(arr)-2
+	// 判断arr[1] 和 arr[len(arr)-2]是不是peek
+
+	return peakIndexInMountainArray(arr, l, r)
+}
+
+func peakIndexInMountainArray(arr []int, l, r int) int {
+	if l == r {
+		return l
+	}
+	if isPeek(arr, l) {
+		return l
+	}
+	if isPeek(arr, r) {
+		return r
+	}
+
+	mid := l + (r-l)>>1
+
+	if isPeek(arr, mid) {
+		return mid
+	}
+
+	if arr[mid-1] < arr[mid] {
+		return peakIndexInMountainArray(arr, mid+1, r)
+	} else {
+		return peakIndexInMountainArray(arr, l, mid)
+	}
+}
+
+func isPeek(arr []int, i int) bool {
+	if i == 0 || i == len(arr)-1 {
+		return false
+	}
+
+	return arr[i-1] < arr[i] && arr[i] > arr[i+1]
+}
+
+func TestPeakIndexInMountainArray(t *testing.T) {
+	arr1 := []int{0, 1, 0}
+	r1 := PeakIndexInMountainArray(arr1)
+	fmt.Println(r1)
+
+	arr2 := []int{0, 2, 1, 0}
+	r2 := PeakIndexInMountainArray(arr2)
+	fmt.Println(r2)
+
+	arr3 := []int{0, 10, 5, 2}
+	r3 := PeakIndexInMountainArray(arr3)
+	fmt.Println(r3)
+
+	arr4 := []int{3, 4, 5, 1}
+	r4 := PeakIndexInMountainArray(arr4)
+	fmt.Println(r4)
+
+	arr5 := []int{24, 69, 100, 99, 79, 78, 67, 36, 26, 19}
+	r5 := PeakIndexInMountainArray(arr5)
+	fmt.Println(r5)
+}
