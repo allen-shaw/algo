@@ -22,10 +22,17 @@ func HeapSort(arr []int) {
 
 func heapSort(arr []int, l, r int) {
 	// 1. 先让数组变成一个大顶堆
-	size := 0
-	for i := l; i <= r; i++ { // O(N)
-		heapInsert(arr, i) // O(logN)
-		size++
+	// size := 0
+	// O(NlogN)
+	// for i := l; i <= r; i++ { // O(N)
+	// 	heapInsert(arr, i) // O(logN)
+	// 	size++
+	// }
+
+	// O(N)
+	size := r - l + 1
+	for i := r; i >= 0; i-- {
+		heapify(arr, i, r)
 	}
 
 	fmt.Println(size, arr)

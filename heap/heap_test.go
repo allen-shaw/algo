@@ -13,7 +13,7 @@ var (
 	errHeapFull  = errors.New("heap full")
 )
 
-// 大顶堆
+// 小顶堆
 type Heap struct {
 	nums []int
 	cap  int
@@ -45,13 +45,19 @@ func (h *Heap) Insert(v int) error {
 	return nil
 }
 
+func (h *Heap) Size() int {
+	return h.size
+}
+
 func (h *Heap) Pop() (int, error) {
 	if h.isEmpty() {
 		return 0, errHeapEmpty
 	}
 	res := h.nums[0]
 	h.size--
-	heapify(h.nums, 0, h.size)
+
+	h.nums[0], h.nums[h.size] = h.nums[h.size], h.nums[0]
+	heapify(h.nums, 0, h.size-1)
 
 	return res, nil
 }
@@ -60,7 +66,7 @@ func heapInsert(arr []int, size, v int) {
 	arr[size] = v
 
 	i := size
-	for arr[i] > arr[(i-1)/2] {
+	for arr[i] < arr[(i-1)/2] {
 		// swap arr[i], arr[i].parent
 		arr[i], arr[(i-1)/2] = arr[(i-1)/2], arr[i]
 		i = (i - 1) / 2
@@ -68,22 +74,21 @@ func heapInsert(arr []int, size, v int) {
 }
 
 func heapify(arr []int, l, r int) {
-	arr[l], arr[r] = arr[r], arr[l]
 	i := 0
 	for {
 		lc := 2*i + 1
-		largest := lc
+		smaller := lc
 		if lc >= r {
 			// 没有子节点
 			break
 		}
-		if lc+1 <= r && arr[lc+1] > arr[lc] {
-			// 有右孩子，且右孩子大于左孩子
-			largest = lc + 1
+		if lc+1 <= r && arr[lc+1] < arr[lc] {
+			// 有右孩子，且右孩子小于左孩子
+			smaller = lc + 1
 		}
-		// 父节点与大的孩子交换
-		arr[i], arr[largest] = arr[largest], arr[i]
-		i = largest
+		// 父节点与较小的孩子交换
+		arr[i], arr[smaller] = arr[smaller], arr[i]
+		i = smaller
 	}
 	// 越界，return
 }
