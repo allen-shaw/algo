@@ -7,6 +7,7 @@ import (
 	"github.com/allen-shaw/algo/tree/queue"
 )
 
+// 求一颗二叉树最大宽度
 func MaxWidth(n *Node) int {
 	if n == nil {
 		return 0
@@ -119,4 +120,58 @@ func MaxWidth2(h *Node) int {
 
 	maxWidth = maxInt(curLvlCnt, maxWidth)
 	return maxWidth
+}
+
+// 判断一棵二叉树是不是搜索二叉树
+func IsBST(h *Node) bool {
+
+}
+
+func isBst(n *Node) (int, int, bool) {
+	if n == nil {
+		return 0, 0, true
+	}
+
+	lmin, lmax, lok := isBst(n.Left)
+	rmin, rmax, rok := isBst(n.Right)
+
+	ok := lok && rok && (lmax <= n.Val && n.Val <= rmin)
+	min := 
+	return
+}
+
+func TestIsBST(t *testing.T) {
+
+}
+
+// 判断一棵二叉树是不是完全二叉树
+
+// 判断一棵二叉树是不是满二叉树
+
+// 判断一棵二叉树是不是平衡二叉树
+func IsBalanceTree(h *Node) bool {
+	_, ok := isBalanceTree(h)
+	return ok
+}
+
+func isBalanceTree(n *Node) (int, bool) {
+	if n == nil {
+		return 0, true
+	}
+
+	lh, lok := isBalanceTree(n.Left)
+	rh, rok := isBalanceTree(n.Right)
+
+	return maxInt(lh, rh) + 1, lok && rok && (absInt(lh-rh) <= 1)
+}
+
+func TestIsBalanceTree(t *testing.T) {
+
+}
+
+func absInt(a int) int {
+	if a >= 0 {
+		return a
+	}
+	return -a
 }
