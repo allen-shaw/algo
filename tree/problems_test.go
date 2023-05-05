@@ -124,7 +124,8 @@ func MaxWidth2(h *Node) int {
 
 // 判断一棵二叉树是不是搜索二叉树
 func IsBST(h *Node) bool {
-
+	_, _, ok := isBst(h)
+	return ok
 }
 
 func isBst(n *Node) (int, int, bool) {
@@ -136,8 +137,10 @@ func isBst(n *Node) (int, int, bool) {
 	rmin, rmax, rok := isBst(n.Right)
 
 	ok := lok && rok && (lmax <= n.Val && n.Val <= rmin)
-	min := 
-	return
+	min := minInts(lmin, rmin, n.Val)
+	max := maxInts(lmax, rmax, n.Val)
+
+	return min, max, ok
 }
 
 func TestIsBST(t *testing.T) {
@@ -174,4 +177,32 @@ func absInt(a int) int {
 		return a
 	}
 	return -a
+}
+
+func maxInts(nums ...int) int {
+	if len(nums) == 0 {
+		panic("nil nums list")
+	}
+
+	max := nums[0]
+	for i := 1; i < len(nums); i++ {
+		if max > nums[i] {
+			max = nums[i]
+		}
+	}
+	return max
+}
+
+func minInts(nums ...int) int {
+	if len(nums) == 0 {
+		panic("nil nums list")
+	}
+
+	min := nums[0]
+	for i := 1; i < len(nums); i++ {
+		if min < nums[i] {
+			min = nums[i]
+		}
+	}
+	return min
 }
