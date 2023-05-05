@@ -7,13 +7,17 @@ import (
 	"github.com/allen-shaw/algo/tree/stack"
 )
 
-type Node struct {
+type TreeNode struct {
 	Val   int
-	Left  *Node
-	Right *Node
+	Left  *TreeNode
+	Right *TreeNode
 }
 
-func PreorderTraversal(n *Node) {
+func NewTreeNode(v int) *TreeNode {
+	return &TreeNode{Val: v}
+}
+
+func PreorderTraversal(n *TreeNode) {
 	if n == nil {
 		return
 	}
@@ -23,7 +27,7 @@ func PreorderTraversal(n *Node) {
 	PreorderTraversal(n.Right)
 }
 
-func InorderTraversal(n *Node) {
+func InorderTraversal(n *TreeNode) {
 	if n == nil {
 		return
 	}
@@ -33,7 +37,7 @@ func InorderTraversal(n *Node) {
 	InorderTraversal(n.Right)
 }
 
-func PostorderTraversal(n *Node) {
+func PostorderTraversal(n *TreeNode) {
 	if n == nil {
 		return
 	}
@@ -43,11 +47,11 @@ func PostorderTraversal(n *Node) {
 	fmt.Println(n.Val)
 }
 
-func PreorderNonrecu(n *Node) {
+func PreorderNonrecu(n *TreeNode) {
 	if n == nil {
 		return
 	}
-	s := stack.New[*Node]()
+	s := stack.New[*TreeNode]()
 	s.Push(n)
 
 	for !s.Empty() {
@@ -62,14 +66,14 @@ func PreorderNonrecu(n *Node) {
 	}
 }
 
-func InorderNonrecu(n *Node) {
+func InorderNonrecu(n *TreeNode) {
 	if n == nil {
 		return
 	}
 
-	s := stack.New[*Node]()
+	s := stack.New[*TreeNode]()
 
-	pushLeftToStack := func(s *stack.Stack[*Node], n *Node) {
+	pushLeftToStack := func(s *stack.Stack[*TreeNode], n *TreeNode) {
 		for n != nil {
 			s.Push(n)
 			n = n.Left
@@ -90,13 +94,13 @@ func InorderNonrecu(n *Node) {
 	}
 }
 
-func PostorderNonrecu(n *Node) {
+func PostorderNonrecu(n *TreeNode) {
 	if n == nil {
 		return
 	}
 
-	s1 := stack.New[*Node]()
-	s2 := stack.New[*Node]()
+	s1 := stack.New[*TreeNode]()
+	s2 := stack.New[*TreeNode]()
 
 	s1.Push(n)
 	for !s1.Empty() {
@@ -117,12 +121,12 @@ func PostorderNonrecu(n *Node) {
 	}
 }
 
-func BFS(n *Node) {
+func BFS(n *TreeNode) {
 	if n == nil {
 		return
 	}
 
-	q := queue.New[*Node]()
+	q := queue.New[*TreeNode]()
 	q.Enqueue(n)
 
 	for !q.Empty() {

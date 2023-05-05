@@ -5,13 +5,13 @@ import (
 	"testing"
 )
 
-func buildTree() *Node {
-	root := &Node{Val: 1}
-	root.Left = &Node{Val: 2}
-	root.Right = &Node{Val: 3}
-	root.Left.Left = &Node{Val: 4}
-	root.Left.Right = &Node{Val: 5}
-	root.Right.Right = &Node{Val: 6}
+func buildTree() *TreeNode {
+	root := &TreeNode{Val: 1}
+	root.Left = &TreeNode{Val: 2}
+	root.Right = &TreeNode{Val: 3}
+	root.Left.Left = &TreeNode{Val: 4}
+	root.Left.Right = &TreeNode{Val: 5}
+	root.Right.Right = &TreeNode{Val: 6}
 
 	return root
 }
