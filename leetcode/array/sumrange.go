@@ -16,6 +16,6 @@ func NewNumArray(nums []int) NumArray {
 	return na
 }
 
-func (this *NumArray) SumRange(left int, right int) int {
-	return this.preSum[right+1] - this.preSum[left]
+func (a *NumArray) SumRange(left int, right int) int {
+	return a.preSum[right+1] - a.preSum[left]
 }

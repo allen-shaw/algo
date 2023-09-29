@@ -20,6 +20,6 @@ func NewNumMatrix(matrix [][]int) NumMatrix {
 	}
 }
 
-func (this *NumMatrix) SumRegion(row1 int, col1 int, row2 int, col2 int) int {
-	return this.preSum[row2+1][col2+1] - this.preSum[row2+1][col1] - this.preSum[row1][col2+1] + this.preSum[row1][col1]
+func (m *NumMatrix) SumRegion(row1 int, col1 int, row2 int, col2 int) int {
+	return m.preSum[row2+1][col2+1] - m.preSum[row2+1][col1] - m.preSum[row1][col2+1] + m.preSum[row1][col1]
 }
