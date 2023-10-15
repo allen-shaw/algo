@@ -1,14 +1,26 @@
 package binarytree
 
-// func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
+func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
+	return lcaTraversal(root, p, q)
+}
 
-// }
+func lcaTraversal(root *TreeNode, p, q *TreeNode) *TreeNode {
+	if root == nil {
+		return nil
+	}
 
-// func lcaTraversal(root *TreeNode) {
-// 	if root == nil {
-// 		return
-// 	}
+	if root == p || root == q {
+		return root
+	}
 
-// 	lcaTraversal(root.Left)
-// 	lcaTraversal(root.Right)
-// }
+	left := lcaTraversal(root.Left, p, q)
+	right := lcaTraversal(root.Right, p, q)
+	if left != nil && right != nil {
+		return root
+	}
+
+	if left != nil {
+		return left
+	}
+	return right
+}
