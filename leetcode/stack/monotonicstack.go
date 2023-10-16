@@ -1,7 +1,7 @@
 package stack
 
 func genMonotonicStack(arr []int) []int {
-	s := NewStack()
+	s := NewStack[int]()
 	res := make([]int, len(arr))
 
 	for i := len(arr) - 1; i >= 0; i-- {

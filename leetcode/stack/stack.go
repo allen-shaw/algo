@@ -1,27 +1,27 @@
 package stack
 
-type Stack struct {
-	data []int
+type Stack[T any] struct {
+	data []T
 }
 
-func NewStack() *Stack {
-	return &Stack{data: make([]int, 0)}
+func NewStack[T any]() *Stack[T] {
+	return &Stack[T]{data: make([]T, 0)}
 }
 
-func (s *Stack) Push(x int) {
+func (s *Stack[T]) Push(x T) {
 	s.data = append(s.data, x)
 }
 
-func (s *Stack) Pop() int {
+func (s *Stack[T]) Pop() T {
 	last := s.data[len(s.data)-1]
 	s.data = s.data[:len(s.data)-1]
 	return last
 }
 
-func (s *Stack) Peek() int {
+func (s *Stack[T]) Peek() T {
 	return s.data[len(s.data)-1]
 }
 
-func (s *Stack) Empty() bool {
+func (s *Stack[T]) Empty() bool {
 	return len(s.data) == 0
 }
