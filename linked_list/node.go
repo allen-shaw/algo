@@ -2,6 +2,11 @@ package linkedlist
 
 import "fmt"
 
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
 type Node struct {
 	Value int
 	Prev  *Node
@@ -30,4 +35,19 @@ func printLinkedList(h *Node) {
 		cur = cur.Next
 	}
 	fmt.Println("nil")
+}
+
+func buildLinkedList(nums ...int) *ListNode {
+	if len(nums) == 0 {
+		return nil
+	}
+
+	head := &ListNode{Val: nums[0]}
+	cur := head
+	for i := 1; i < len(nums); i++ {
+		cur.Next = &ListNode{Val: nums[i]}
+		cur = cur.Next
+	}
+
+	return head
 }
