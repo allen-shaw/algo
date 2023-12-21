@@ -28,10 +28,10 @@ func createLinkedList(nums ...int) *Node {
 	return head
 }
 
-func printLinkedList(h *Node) {
+func printLinkedList(h *ListNode) {
 	cur := h
 	for cur != nil {
-		fmt.Printf("%v->", cur.Value)
+		fmt.Printf("%v->", cur.Val)
 		cur = cur.Next
 	}
 	fmt.Println("nil")
