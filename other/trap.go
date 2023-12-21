@@ -118,3 +118,25 @@ func calcMaxArea(height []int) int {
 	}
 	return len(height) * maxHegiht
 }
+
+func trap3(height []int) int {
+	res := 0
+	lmax, rmax := 0, 0
+
+	l, r := 0, len(height)-1
+	for l < r {
+		lmax = max(lmax, height[l])
+		rmax = max(rmax, height[r])
+
+		// res += min(lmax, rmax) - height[i]
+		if lmax < rmax {
+			res += lmax - height[l]
+			l++
+		} else {
+			res += rmax - height[r]
+			r--
+		}
+	}
+
+	return res
+}
