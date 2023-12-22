@@ -73,3 +73,64 @@ func reverseN(head *ListNode, n int) *ListNode {
 
 	return last
 }
+
+func reverseKGroup(head *ListNode, k int) *ListNode {
+	tail := head
+	for i := 0; i < k; i++ {
+		if tail == nil {
+			return head
+		}
+		tail = tail.Next
+	}
+
+	newHead := reverseTo(head, tail)
+	head.Next = reverseKGroup(tail, k)
+	return newHead
+}
+
+func reverseTo(head, tail *ListNode) *ListNode {
+	if head == nil || head.Next == tail {
+		return head
+	}
+
+	newHead := reverseTo(head.Next, tail)
+	head.Next.Next = head
+	head.Next = nil
+
+	return newHead
+}
+
+func swapPairs(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+
+	tail := head.Next.Next
+	newHead := head.Next
+	head.Next.Next = head
+	head.Next = swapPairs(tail)
+	return newHead
+}
+
+var p *ListNode
+
+func isPalindrome(head *ListNode) bool {
+	p = head
+	return traverse(head)
+}
+
+func traverse(head *ListNode) bool {
+	if head == nil {
+		return true
+	}
+
+	if !traverse(head.Next) {
+		return false
+	}
+
+	if p.Val != head.Val {
+		return false
+	}
+	p = p.Next
+	return true
+}
