@@ -7,16 +7,30 @@ import (
 
 func threeSumClosest(nums []int, target int) int {
 	sort.Ints(nums)
-	min := math.MaxInt
+	ans := math.MaxInt
 
 	for i := 0; i < len(nums); i++ {
-		sum := nums[i] + twoSumClosest(nums[i+1:], target-nums[i])
-		if abs(target-sum) < abs(min) {
-			min = target - sum
+		if i > 0 && nums[i] == nums[i-1] {
+			continue
+		}
+		j, k := i+1, len(nums)-1
+		for j < k {
+			sum := nums[i] + nums[j] + nums[k]
+			if abs(sum-target) < abs(ans-target) {
+				ans = sum
+			}
+
+			if sum == target {
+				return sum
+			} else if sum < target {
+				j++
+			} else if sum > target {
+				k--
+			}
 		}
 	}
 
-	return target - min
+	return ans
 }
 
 func twoSumClosest(nums []int, target int) int {
