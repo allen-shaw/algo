@@ -137,3 +137,11 @@ func equationsPossible(equations []string) bool {
 
 	return true
 }
+
+// X O X
+// O X O
+// X O X
+
+// func removeStones(stones [][]int) int {
+
+// }
