@@ -28,3 +28,34 @@ func TestAreaRound(t *testing.T) {
 		})
 	}
 }
+
+func TestExist(t *testing.T) {
+	var testsets = []struct {
+		board [][]byte
+		word  string
+		ans   bool
+	}{
+		{
+			[][]byte{{'A', 'B', 'C', 'E'}, {'S', 'F', 'C', 'S'}, {'A', 'D', 'E', 'E'}},
+			"ABCCED",
+			true,
+		},
+		{
+			[][]byte{{'A', 'B', 'C', 'E'}, {'S', 'F', 'C', 'S'}, {'A', 'D', 'E', 'E'}},
+			"SEE",
+			true,
+		},
+		{
+			[][]byte{{'A', 'B', 'C', 'E'}, {'S', 'F', 'C', 'S'}, {'A', 'D', 'E', 'E'}},
+			"ABCB",
+			false,
+		},
+	}
+
+	for _, tt := range testsets {
+		t.Run("exist", func(t *testing.T) {
+			ans := exist(tt.board, tt.word)
+			assert.Equal(t, tt.ans, ans)
+		})
+	}
+}

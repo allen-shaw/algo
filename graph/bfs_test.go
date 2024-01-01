@@ -21,3 +21,12 @@ func TestIsBipartite(t *testing.T) {
 	ans := isBipartite(graph)
 	fmt.Println(ans)
 }
+
+func TestOrangesRotting(t *testing.T) {
+	// testsets :=
+
+	// grid := [][]int{{2, 1, 1}, {1, 1, 0}, {0, 1, 1}}
+	grid := [][]int{{1}, {2}}
+	ans := orangesRotting(grid)
+	fmt.Println(ans)
+}

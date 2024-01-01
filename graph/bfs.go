@@ -142,3 +142,53 @@ func doPossibleBipartition(g [][]int, v int) bool {
 
 	return true
 }
+
+type ocell struct {
+	x, y int
+}
+
+func orangesRotting(grid [][]int) int {
+	ans := 0
+	q := make([]ocell, 0, len(grid)*len(grid[0]))
+	visited := make([][]bool, len(grid))
+	for i := 0; i < len(visited); i++ {
+		visited[i] = make([]bool, len(grid[0]))
+	}
+
+	for i := 0; i < len(grid); i++ {
+		for j := 0; j < len(grid[0]); j++ {
+			if grid[i][j] == 2 {
+				q = append(q, ocell{i, j})
+				visited[i][j] = true
+			}
+		}
+	}
+
+	for len(q) > 0 {
+		size := len(q)
+		for k := 0; k < size; k++ {
+			c := q[0]
+			q = q[1:] // pop
+
+			for i := 0; i < 4; i++ {
+				x, y := c.x+dir[i], c.y+dir[i+1]
+				if x >= 0 && x < len(grid) && y >= 0 && y < len(grid[0]) && !visited[x][y] && grid[x][y] == 1 {
+					grid[x][y] = 2
+					q = append(q, ocell{x, y})
+					visited[x][y] = true
+				}
+			}
+		}
+		ans++
+	}
+
+	for i := 0; i < len(grid); i++ {
+		for j := 0; j < len(grid[0]); j++ {
+			if grid[i][j] == 1 {
+				return -1
+			}
+		}
+	}
+
+	return ans - 1
+}
