@@ -1,6 +1,8 @@
 package graph
 
-import "fmt"
+import (
+	"fmt"
+)
 
 var dir = []int{-1, 0, 1, 0, -1}
 
@@ -90,4 +92,75 @@ func edfs(board [][]byte, i, j int, word string, k int) {
 
 	epath = epath[:len(epath)-1]
 	evisited[i][j] = false
+}
+
+var (
+	cccvisited []bool
+)
+
+func countCompleteComponents(n int, edges [][]int) int {
+	g := make([][]int, n)
+	for i := 0; i < len(edges); i++ {
+		edge := edges[i]
+		a, b := edge[0], edge[1]
+		g[a] = append(g[a], b)
+		g[b] = append(g[b], a)
+	}
+
+	ans := 0
+	cccvisited = make([]bool, n)
+
+	for v := range g {
+		if !cccvisited[v] {
+			cccdfs(g, v)
+			ans++
+		}
+	}
+
+	return ans
+}
+
+func cccdfs(g [][]int, v int) {
+	if cccvisited[v] {
+		return
+	}
+
+	cccvisited[v] = true
+	edges := g[v]
+	for _, n := range edges {
+		cccdfs(g, n)
+	}
+}
+
+var (
+	fcnvisited []bool
+)
+
+func findCircleNum(isConnected [][]int) int {
+	fcnvisited = make([]bool, len(isConnected))
+	ans := 0
+
+	for i := range isConnected {
+		if !fcnvisited[i] {
+			fcndfs(isConnected, i)
+			ans++
+		}
+	}
+
+	return ans
+}
+
+func fcndfs(g [][]int, i int) {
+	if fcnvisited[i] {
+		return
+	}
+
+	fcnvisited[i] = true
+	edges := g[i]
+	for v, c := range edges {
+		if c == 0 {
+			continue
+		}
+		fcndfs(g, v)
+	}
 }
