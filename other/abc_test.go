@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 	"testing"
+	"unsafe"
 )
 
 func sequenceABC() {
@@ -45,4 +46,12 @@ func sequenceABC() {
 
 func TestSequenceABC(t *testing.T) {
 	sequenceABC()
+}
+
+func TestSizeOf(t *testing.T) {
+	a, b, c, d := 1, 2, 3, 4
+	arr := []*int{&a, &b, &c, &d, &a, &b, &c, &d}
+	arr2 := [...]*int{&a, &b, &c, &d}
+	fmt.Println(unsafe.Sizeof(arr))
+	fmt.Println(unsafe.Sizeof(arr2))
 }
