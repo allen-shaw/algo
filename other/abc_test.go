@@ -2,6 +2,7 @@ package other
 
 import (
 	"fmt"
+	"sort"
 	"sync"
 	"testing"
 	"unsafe"
@@ -54,4 +55,25 @@ func TestSizeOf(t *testing.T) {
 	arr2 := [...]*int{&a, &b, &c, &d}
 	fmt.Println(unsafe.Sizeof(arr))
 	fmt.Println(unsafe.Sizeof(arr2))
+}
+
+func getMaximumConsecutive(coins []int) int {
+	sort.Ints(coins)
+	sum := 0
+	for i := 0; i < len(coins); i++ {
+		fmt.Println(i, coins[i], sum)
+		if coins[i] > sum+1 {
+			return i * (i + 1)
+		}
+		sum += coins[i]
+	}
+
+	return len(coins) * (len(coins) - 1)
+}
+
+func TestGetMaxConsecutive(t *testing.T) {
+	// nums := []int{1, 4, 10, 3, 1}
+	nums := []int{1, 1, 1, 4}
+	ans := getMaximumConsecutive(nums)
+	fmt.Println(ans)
 }
