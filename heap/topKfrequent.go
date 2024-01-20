@@ -2,78 +2,66 @@ package heap
 
 import (
 	"fmt"
-)
-
-var (
-	topK []int
+	"math/rand"
 )
 
 func topKFrequent(nums []int, k int) []int {
-	topK = make([]int, 0, k)
-	m := make(map[int]int, len(nums))
+	m := make(map[int]int, 0)
 	for _, n := range nums {
 		m[n]++
 	}
 
-	freqs := make([][]int, 0, len(m))
-	for i, f := range m {
-		freqs = append(freqs, []int{i, f})
+	datas := make([][]int, 0, len(m))
+	for n, f := range m {
+		datas = append(datas, []int{n, f})
 	}
 
-	lo, hi := 0, len(freqs)-1
+	fmt.Println("datas:", datas)
+
+	lo, hi := 0, len(datas)-1
 	for lo < hi {
-		p := partitionFreq(freqs, lo, hi)
-		if p <= k {
-			for i := lo; i <= p; i++ {
-				topK = append(topK, freqs[i][0])
-			}
+		p := tkfParition(datas, lo, hi)
+		if p == k {
+			break
+		} else if p < k {
 			lo = p + 1
-		} else {
+		} else { // p > k
 			hi = p - 1
 		}
 	}
 
-	return topK
-}
+	fmt.Println("after data:", datas)
 
-func topKFrequentQSort(nums [][]int, k, lo, hi int) {
-	fmt.Println("nums:", nums, "k:", k, "lo:", lo, "hi", hi)
-	if lo >= hi {
-		return
+	ans := make([]int, 0, k)
+	for i := 0; i < k; i++ {
+		ans = append(ans, datas[i][0])
 	}
 
-	p := partitionFreq(nums, lo, hi)
-	fmt.Println("nums:", nums, "p:", p, "k:", k)
-	if p <= k {
-		for i := lo; i <= p; i++ {
-			topK = append(topK, nums[i][0])
-		}
-		topKFrequentQSort(nums, k-(p-lo)+1, p+1, hi)
-	} else {
-		topKFrequentQSort(nums, k, lo, p-1)
-	}
-
+	return ans
 }
 
-func partitionFreq(nums [][]int, lo, hi int) int {
-	// 	r := rand.Intn(hi-lo) + lo
-	// 	nums[lo], nums[r] = nums[r], nums[lo]
+func tkfParition(nums [][]int, lo, hi int) int {
+	r := rand.Intn(hi-lo) + lo
+	nums[lo], nums[r] = nums[r], nums[lo]
 
 	p := nums[lo][1]
-	i, j := lo+1, hi
 
+	i, j := lo, hi
 	for i <= j {
-		for i < hi && nums[i][1] >= p {
+		for i <= hi && nums[i][1] >= p {
 			i++
 		}
-		for j > lo && nums[j][1] <= p {
+		for j >= lo && nums[j][1] < p {
 			j--
 		}
 		if i >= j {
 			break
 		}
 		nums[i], nums[j] = nums[j], nums[i]
+		i++
+		j--
 	}
-	nums[j], nums[lo] = nums[lo], nums[j]
+
+	nums[lo], nums[j] = nums[j], nums[lo]
 	return j
 }
