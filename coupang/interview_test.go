@@ -2,7 +2,9 @@ package coupang
 
 import (
 	"fmt"
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -97,4 +99,220 @@ func TestRotateMatrix(t *testing.T) {
 			assert.Equal(t, tt.out, tt.matrix)
 		})
 	}
+}
+
+func print10() {
+	n := 0
+
+	var wg sync.WaitGroup
+	chanA := make(chan struct{})
+	chanB := make(chan struct{})
+
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		for {
+			_, ok := <-chanA
+			if !ok {
+				return
+			}
+
+			n++
+			println(n)
+			chanB <- struct{}{}
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		for {
+			_, ok := <-chanB
+			if !ok {
+				return
+			}
+
+			n--
+			println(n)
+			chanA <- struct{}{}
+		}
+	}()
+
+	chanA <- struct{}{}
+	wg.Wait()
+}
+
+func TestPrintln10(t *testing.T) {
+
+}
+
+// local cache Key Level TTL
+type LocalCache[K comparable, V any] interface {
+	Set(key K, val V, ttl time.Time) bool
+	Get(key K) (V, bool)
+	Insert(key K, val V, ttl time.Time) bool
+	Delete(key K) bool
+	Size() int
+}
+
+func NewLocalCache[K comparable, V any](cap int) LocalCache[K, V] {
+	return newLocalCache[K, V](cap)
+}
+
+type node[K comparable, V any] struct {
+	prev *node[K, V]
+	next *node[K, V]
+	key  K
+	val  V
+	ttl  time.Time
+}
+
+type sortedList[K comparable, V any] struct {
+	head *node[K, V]
+	tail *node[K, V]
+	size int
+}
+
+func newSortedList[K comparable, V any]() *sortedList[K, V] {
+	l := &sortedList[K, V]{}
+	l.head = &node[K, V]{}
+	l.tail = &node[K, V]{}
+
+	return l
+}
+
+func (l *sortedList[K, V]) Head() *node[K, V] {
+
+}
+
+func (l *sortedList[K, V]) Insert(n *node[K, V]) {
+
+}
+
+func (l *sortedList[K, V]) Delete(n *node[K, V]) {
+
+}
+
+func (l *sortedList[K, V]) Pop() {
+
+}
+
+type localCache[K comparable, V any] struct {
+	m   map[K]*node[K, V]
+	l   *sortedList[K, V]
+	mu  sync.RWMutex
+	cap int
+}
+
+func newLocalCache[K comparable, V any](cap int) *localCache[K, V] {
+	c := &localCache[K, V]{}
+	c.m = make(map[K]*node[K, V], cap)
+	c.l = newSortedList[K, V]()
+	c.cap = cap
+	return c
+}
+
+// Get implements LocalCache.
+func (c *localCache[K, V]) Get(key K) (val V, ok bool) {
+	now := time.Now()
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	c.check()
+
+	var n *node[K, V]
+	n, ok = c.m[key]
+	if !ok {
+		return val, ok
+	}
+
+	if now.Sub(n.ttl) > 0 {
+		delete(c.m, key)
+		c.l.Delete(n)
+		return val, false
+	}
+
+	return n.val, true
+}
+
+// Insert implements LocalCache.
+func (c *localCache[K, V]) Insert(key K, val V, ttl time.Time) bool {
+	now := time.Now()
+	if now.Sub(ttl) > 0 {
+		return false
+	}
+
+	n := &node[K, V]{key: key, val: val, ttl: ttl}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	c.check()
+
+	n2, ok := c.m[key]
+	if ok {
+		if now.Sub(n2.ttl) < 0 {
+			return false
+		}
+	}
+
+	c.l.Delete(n2)
+	c.m[key] = n
+	c.l.Insert(n)
+	return true
+}
+
+// Set implements LocalCache.
+func (c *localCache[K, V]) Set(key K, val V, ttl time.Time) bool {
+	now := time.Now()
+	if now.Sub(ttl) > 0 {
+		return false
+	}
+
+	n := &node[K, V]{key: key, val: val, ttl: ttl}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	c.check()
+	n2, ok := c.m[key]
+	if ok {
+		c.l.Delete(n2)
+	}
+	c.m[key] = n
+	c.l.Insert(n)
+	return true
+}
+
+func (c *localCache[K, V]) Delete(key K) bool {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	c.check()
+
+	n, ok := c.m[key]
+	if !ok {
+		return false
+	}
+
+	delete(c.m, key)
+	c.l.Delete(n)
+	return true
+}
+
+func (c *localCache[K, V]) Size() int {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return len(c.m)
+}
+
+func (c *localCache[K, V]) check() {
+	n := c.l.Head()
+	if n == nil {
+		return
+	}
+	now := time.Now()
+	if now.Sub(n.ttl) > 0 {
+		c.l.Pop()
+	}
+	key := n.key
+	delete(c.m, key)
 }
