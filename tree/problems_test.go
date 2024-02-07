@@ -316,3 +316,29 @@ func findParent(n *TreeNode, m map[*TreeNode]*TreeNode) {
 		findParent(n.Right, m)
 	}
 }
+
+func deepestLeavesSum(root *TreeNode) int {
+	maxDepth := 0
+	sum := 0
+
+	var dfs func(*TreeNode, int)
+	dfs = func(root *TreeNode, lvl int) {
+		if root == nil {
+			return
+		}
+		if lvl > maxDepth {
+			maxDepth = lvl
+			sum = 0
+		}
+
+		if lvl == maxDepth {
+			sum += root.Val
+		}
+
+		dfs(root.Left, lvl+1)
+		dfs(root.Right, lvl+1)
+	}
+
+	dfs(root, 0)
+	return sum
+}

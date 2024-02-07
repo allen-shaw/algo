@@ -77,5 +77,51 @@ func TestUnionFind(t *testing.T) {
 	fmt.Println(uf.parent)
 
 	fmt.Println(uf.Find(2))
+}
 
+func areSentencesSimilarTwo(sentence1 []string, sentence2 []string, similarPairs [][]string) bool {
+	if len(sentence1) != len(sentence2) {
+		return false
+	}
+
+	m, uf := buildUnionFound(similarPairs)
+	size := len(sentence1)
+	for i := 0; i < size; i++ {
+		w1, w2 := m[sentence1[i]], m[sentence2[i]]
+		if uf.Find(w1) != uf.Find(w2) {
+			return false
+		}
+	}
+	return true
+}
+
+func buildUnionFound(pairs [][]string) (map[string]int, *UnionFound) {
+	i := 0
+	m := make(map[string]int)
+	for _, pair := range pairs {
+		_, ok := m[pair[0]]
+		if !ok {
+			m[pair[0]] = i
+			i++
+		}
+		_, ok = m[pair[1]]
+		if !ok {
+			m[pair[1]] = i
+			i++
+		}
+	}
+	uf := NewUnionFound(len(m))
+	for _, pair := range pairs {
+		w1, w2 := m[pair[0]], m[pair[1]]
+		uf.Union(w1, w2)
+	}
+
+	return m, uf
+}
+
+func TestAreSentencesSimilarTwo(t *testing.T) {
+	sentence1 := []string{"great", "acting", "skills"}
+	sentence2 := []string{"fine", "drama", "talent"}
+	similarPairs := [][]string{{"great", "good"}, {"fine", "good"}, {"drama", "acting"}, {"skills", "talent"}}
+	fmt.Println(areSentencesSimilarTwo(sentence1, sentence2, similarPairs))
 }
