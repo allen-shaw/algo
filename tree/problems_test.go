@@ -386,7 +386,7 @@ func TestToNums(t *testing.T) {
 	a := 'a' + 2
 	fmt.Println(string(a))
 
-	strings.
+	// strings.
 }
 
 func longestConsecutive(root *TreeNode) int {
