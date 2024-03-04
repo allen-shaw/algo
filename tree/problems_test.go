@@ -2,6 +2,8 @@ package tree
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/allen-shaw/algo/tree/queue"
@@ -341,4 +343,72 @@ func deepestLeavesSum(root *TreeNode) int {
 
 	dfs(root, 0)
 	return sum
+}
+
+func binaryTreePaths(root *TreeNode) []string {
+	ans := make([]string, 0)
+
+	var dfs func(root *TreeNode, path *[]string)
+	dfs = func(root *TreeNode, path *[]string) {
+		if root == nil {
+			ans = append(ans, toString(*path))
+		}
+
+		v := strconv.Itoa(root.Val)
+		*path = append(*path, v)
+		dfs(root.Left, path)
+		dfs(root.Right, path)
+		*path = (*path)[:len(*path)-1]
+	}
+
+	path := make([]string, 0)
+	dfs(root, &path)
+	return ans
+}
+
+func toString(nums []string) string {
+	return strings.Join(nums, "->")
+}
+
+func toNums(nums []int) int {
+	ans := 0
+	for i := 0; i < len(nums); i++ {
+		ans = ans*10 + nums[i]
+	}
+	return ans
+}
+
+func TestToNums(t *testing.T) {
+	nums := []int{1, 2}
+	ans := toNums(nums)
+	fmt.Println(ans)
+
+	a := 'a' + 2
+	fmt.Println(string(a))
+
+	strings.
+}
+
+func longestConsecutive(root *TreeNode) int {
+	ans := 0
+
+	var dfs func(root *TreeNode, len int, parent int)
+	dfs = func(root *TreeNode, len, parent int) {
+		if root == nil {
+			return
+		}
+
+		if root.Val == parent+1 {
+			len++
+		} else {
+			len = 1
+		}
+		ans = max(ans, len)
+
+		dfs(root.Left, len, root.Val)
+		dfs(root.Right, len, root.Val)
+	}
+
+	dfs(root, 0, root.Val)
+	return ans
 }
