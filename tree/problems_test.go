@@ -2,6 +2,7 @@ package tree
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 	"testing"
@@ -411,4 +412,80 @@ func longestConsecutive(root *TreeNode) int {
 
 	dfs(root, 0, root.Val)
 	return ans
+}
+
+func pathSum3(nums []int) int {
+	m := make(map[int]*TreeNode)
+	_, _, v0 := decode(nums[0])
+	root := &TreeNode{Val: v0}
+	m[1] = root
+
+	for i := 1; i < len(nums); i++ {
+		num := nums[i]
+		y, x, v := decode(num)
+		id := int(math.Pow(2, float64((y-1)))) + (x - 1)
+
+		tn := &TreeNode{Val: v}
+		m[id] = tn
+
+		pid := id / 2
+		p, ok := m[pid]
+		if !ok {
+			fmt.Println(id, pid, m, num, y, x, v)
+			panic("p not exist")
+		}
+
+		if id == pid*2 {
+			p.Left = tn
+		} else {
+			p.Right = tn
+		}
+	}
+
+	travese(nil, root)
+
+	sum := 0
+	path := 0
+	var dfs func(root *TreeNode)
+	dfs = func(root *TreeNode) {
+		if root == nil {
+			return
+		}
+
+		path += root.Val
+		if root.Left == nil && root.Right == nil {
+			sum += path
+		}
+
+		dfs(root.Left)
+		dfs(root.Right)
+		path -= root.Val
+	}
+	dfs(root)
+	return sum
+}
+
+func decode(num int) (int, int, int) {
+	v := num % 10
+	num = num / 10
+	x := num % 10
+	num = num / 10
+	y := num
+	return y, x, v
+}
+
+func TestPathSum3(t *testing.T) {
+	nums := []int{113, 215, 221}
+	sum := pathSum3(nums)
+	fmt.Println(sum)
+}
+
+func travese(p, root *TreeNode) {
+	if root == nil {
+		return
+	}
+
+	fmt.Println(p, root.Val)
+	travese(root, root.Left)
+	travese(root, root.Right)
 }
