@@ -489,3 +489,103 @@ func travese(p, root *TreeNode) {
 	travese(root, root.Left)
 	travese(root, root.Right)
 }
+
+func constructMaximumBinaryTree(nums []int) *TreeNode {
+	stack := make([]*TreeNode, 0)
+
+	for _, n := range nums {
+		tn := &TreeNode{Val: n}
+		for len(stack) != 0 {
+			top := stack[len(stack)-1]
+			fmt.Println(tn, top)
+			if tn.Val > top.Val {
+				stack = stack[:len(stack)-1] // pop
+				tn.Left = top
+			} else { // tn.Val < top.Val
+				stack = append(stack, tn)
+				top.Right = tn
+				break
+			}
+		}
+		if len(stack) == 0 {
+			stack = append(stack, tn)
+		}
+	}
+
+	return stack[0]
+}
+
+func TestConstructMaximumBinaryTree(t *testing.T) {
+	nums := []int{3, 2, 1, 6, 0, 5}
+	root := constructMaximumBinaryTree(nums)
+	fmt.Println(root)
+}
+
+func treeToDoublyList(root *TreeNode) *TreeNode {
+	var dfs func(root *TreeNode) (*TreeNode, *TreeNode)
+	dfs = func(root *TreeNode) (*TreeNode, *TreeNode) {
+		if root == nil {
+			return nil, nil
+		}
+
+		leftMin, leftMax := dfs(root.Left)
+		rightMin, rightMax := dfs(root.Right)
+
+		root.Left = leftMax
+		root.Right = rightMin
+
+		if leftMax != nil {
+			leftMax.Right = root
+		}
+		if rightMin != nil {
+			rightMin.Left = root
+		}
+
+		return leftMin, rightMax
+	}
+
+	head, tail := dfs(root)
+	tail.Right = head
+	head.Left = tail
+	return head
+}
+
+var memo map[int][]*TreeNode
+
+func allPossibleFBT(n int) []*TreeNode {
+	if n%2 == 0 {
+		return nil
+	}
+	if n == 1 {
+		return []*TreeNode{{}}
+	}
+
+	if v, ok := memo[n]; ok {
+		return v
+	}
+
+	res := make([]*TreeNode, 0)
+
+	i := 1
+	j := n - 1 - i
+
+	for j > 0 {
+		leftTrees := allPossibleFBT(i)
+		rightTrees := allPossibleFBT(j)
+
+		for _, lt := range leftTrees {
+			for _, rt := range rightTrees {
+				root := &TreeNode{}
+				root.Left = lt
+				root.Right = rt
+				res = append(res, root)
+			}
+		}
+
+		i += 2
+		j -= 2
+	}
+
+	memo[n] = res
+	return res
+}
