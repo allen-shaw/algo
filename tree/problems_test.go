@@ -589,3 +589,78 @@ func allPossibleFBT(n int) []*TreeNode {
 	memo[n] = res
 	return res
 }
+
+func findLeaves(root *TreeNode) [][]int {
+	ans := make([][]int, 0)
+
+	var dfs func(root *TreeNode) (*TreeNode, int)
+	dfs = func(root *TreeNode) (*TreeNode, int) {
+		if root == nil {
+			return nil, 0
+		}
+
+		var ld, rd, deep int
+		root.Left, ld = dfs(root.Left)
+		root.Right, rd = dfs(root.Right)
+
+		deep = max(ld, rd) + 1
+		if root.Left == nil && root.Right == nil {
+			for len(ans) < deep {
+				ans = append(ans, make([]int, 0))
+			}
+			ans[deep] = append(ans[deep], root.Val)
+			return nil, deep
+		}
+
+		return root, deep
+	}
+
+	dfs(root)
+	return ans
+}
+
+func longestConsecutive(root *TreeNode) int {
+	maxLenght := 0
+
+	var dfs func(root *TreeNode) (min, max int)
+	dfs = func(root *TreeNode) (min, max int) {
+		if root == nil {
+			return 0, 0
+		}
+
+		lmin, lmax := dfs(root.Left)
+		rmin, rmax := dfs(root.Right)
+
+		min, max = 1, 1
+		// 递减 求min
+		if root.Left != nil && root.Val == root.Left.Val-1 {
+			min = lmin + 1
+		}
+		if root.Right != nil && root.Val == root.Right.Val-1 {
+			min = maximum(min, rmin+1)
+		}
+
+		// 递增 求max
+		if root.Left != nil && root.Val == root.Left.Val+1 {
+			max = lmax + 1
+		}
+		if root.Right != nil && root.Val == root.Right.Val+1 {
+			max = maximum(max, rmax+1)
+		}
+
+		maxLenght = maximum(maxLenght, min+max-1)
+		return min, max
+	}
+
+	dfs(root)
+
+	return maxLenght
+}
+
+func maximum(nums ...int) int {
+	m := nums[0]
+	for _, v := range nums {
+		m = max(v, m)
+	}
+	return m
+}
