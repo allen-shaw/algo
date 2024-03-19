@@ -390,7 +390,7 @@ func TestToNums(t *testing.T) {
 	// strings.
 }
 
-func longestConsecutive(root *TreeNode) int {
+func longestConsecutive2(root *TreeNode) int {
 	ans := 0
 
 	var dfs func(root *TreeNode, len int, parent int)
@@ -663,4 +663,137 @@ func maximum(nums ...int) int {
 		m = max(v, m)
 	}
 	return m
+}
+
+func maximumAverageSubtree(root *TreeNode) float64 {
+	var maxAvg float64
+
+	var dfs func(root *TreeNode) (nodenum, sum int)
+	dfs = func(root *TreeNode) (nodenum int, sum int) {
+		if root == nil {
+			return 0, 0
+		}
+
+		lnum, lsum := dfs(root.Left)
+		rnum, rsum := dfs(root.Right)
+
+		nodenum = lnum + rnum + 1
+		sum = lsum + rsum + root.Val
+
+		avg := float64(sum) / float64(nodenum)
+		maxAvg = max(maxAvg, avg)
+
+		return nodenum, sum
+	}
+
+	dfs(root)
+	return maxAvg
+}
+
+func countHighestScoreNodes(parents []int) int {
+	n := len(parents)
+	tree := make([][]int, n)
+
+	for i, p := range parents {
+		if p == -1 {
+			continue
+		}
+		tree[p] = append(tree[p], i)
+	}
+
+	maxScore := 0
+	count := 0
+
+	// 返回以i为根的子树的大小
+	var dfs func(i int) int
+	dfs = func(i int) int {
+		score := 1
+		subnums := 0
+		children := tree[i]
+		for _, child := range children {
+			subNum := dfs(child)
+			if subNum != 0 {
+				score *= subNum
+				subnums += subNum
+			}
+		}
+		if (n - 1 - subnums) != 0 {
+			score *= (n - 1 - subnums)
+		}
+		if score > maxScore {
+			maxScore = score
+			count = 1
+		} else if score == maxScore {
+			count++
+		}
+
+		return subnums + 1
+	}
+
+	dfs(0)
+	return count
+}
+
+func Test_countHighestScoreNodes(t *testing.T) {
+	parents := []int{-1, 2, 0} // -1, 2, 0, 2, 0}
+	ans := countHighestScoreNodes(parents)
+	fmt.Println(ans)
+}
+
+func treeDiameter(edges [][]int) int {
+	// 最有有n+1个节点，n为边的数量
+	n := len(edges)
+	if n == 0 {
+		return 0
+	}
+
+	inDegree := make(map[int]int)
+	tree := make([][]int, n+1)
+	for _, edge := range edges {
+		tree[edge[0]] = append(tree[edge[0]], edge[1])
+		if _, ok := inDegree[edge[0]]; !ok {
+			inDegree[edge[0]] = 0
+		}
+		inDegree[edge[1]]++
+	}
+
+	// 找到root节点
+	root := -1
+	fmt.Println(inDegree)
+	for n, indegree := range inDegree {
+		if indegree == 0 {
+			root = n
+			break
+		}
+	}
+
+	maxDiameter := 0
+
+	// 返回root节点为根的最大高度
+	var dfs func(root int) int
+	dfs = func(root int) int {
+		maxDepth, secDepth := 0, 0
+		children := tree[root]
+		for _, child := range children {
+			depth := dfs(child)
+			if depth > maxDepth {
+				secDepth = maxDepth
+				maxDepth = depth
+			} else if depth > secDepth {
+				secDepth = depth
+			}
+		}
+
+		maxDiameter = max(maxDiameter, maxDepth+secDepth)
+		return maxDepth + 1
+	}
+
+	dfs(root)
+	return maxDiameter
+}
+
+func Test_treeDiameter(t *testing.T) {
+	edges := [][]int{{0, 1}, {0, 2}}
+	ans := treeDiameter(edges)
+	fmt.Println(ans)
 }
