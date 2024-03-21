@@ -797,3 +797,73 @@ func Test_treeDiameter(t *testing.T) {
 	ans := treeDiameter(edges)
 	fmt.Println(ans)
 }
+
+func lowestCommonAncestor4(root *TreeNode, nodes []*TreeNode) *TreeNode {
+	m := make(map[*TreeNode]struct{})
+	for _, n := range nodes {
+		m[n] = struct{}{}
+	}
+
+	var dfs func(root *TreeNode) *TreeNode
+	dfs = func(root *TreeNode) *TreeNode {
+		if root == nil {
+			return nil
+		}
+
+		if _, ok := m[root]; ok {
+			return root
+		}
+
+		left := dfs(root.Left)
+		right := dfs(root.Right)
+
+		if left != nil && right != nil {
+			return root
+		}
+
+		if left != nil {
+			return left
+		}
+		return right
+	}
+
+	return dfs(root)
+}
+
+func lowestCommonAncestor2(root, p, q *TreeNode) *TreeNode {
+	var pok, qok bool
+
+	var dfs func(root *TreeNode) *TreeNode
+	dfs = func(root *TreeNode) *TreeNode {
+		if root == nil {
+			return nil
+		}
+
+		left := dfs(root.Left)
+		right := dfs(root.Right)
+
+		if left != nil && right != nil {
+			return root
+		}
+
+		if root.Val == p.Val {
+			pok = true
+			return root
+		}
+		if root.Val == q.Val {
+			qok = true
+			return root
+		}
+
+		if left != nil {
+			return left
+		}
+		return right
+	}
+
+	ans := dfs(root)
+	if pok && qok {
+		return ans
+	}
+	return nil
+}
