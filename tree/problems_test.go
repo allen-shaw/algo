@@ -619,7 +619,7 @@ func findLeaves(root *TreeNode) [][]int {
 	return ans
 }
 
-func longestConsecutive(root *TreeNode) int {
+func longestConsecutive4(root *TreeNode) int {
 	maxLenght := 0
 
 	var dfs func(root *TreeNode) (min, max int)
