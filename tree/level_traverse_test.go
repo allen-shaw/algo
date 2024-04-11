@@ -2,6 +2,7 @@ package tree
 
 import (
 	"fmt"
+	"strconv"
 	"testing"
 )
 
@@ -295,4 +296,14 @@ func Test_killProcess(t *testing.T) {
 
 	ans := killProcess(pid, ppid, kill)
 	fmt.Println(ans)
+}
+
+func str2tree(s string) *TreeNode {
+
+}
+
+func Test_str2tree(t *testing.T) {
+	s := "4(2(3)(1))(6(5))"
+	root := str2tree(s)
+	printBTree(root)
 }
