@@ -1,6 +1,7 @@
 package linkedlist
 
 import (
+	"container/heap"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -68,4 +69,46 @@ func Test_deleteDuplicatesUnsorted(t *testing.T) {
 			assert.Equal(t, c.expect, toArray(out))
 		})
 	}
+}
+
+func mergeKLists(lists []*ListNode) *ListNode {
+	dummy := &ListNode{}
+	p := dummy
+	hp := &Heap{}
+	heap.Init(hp)
+
+	for _, l := range lists {
+		heap.Push(hp, l)
+	}
+
+	for hp.Len() > 0 {
+		n := heap.Pop(hp).(*ListNode)
+		p.Next = n
+		p = p.Next
+		next := n.Next
+		n.Next = nil
+		heap.Push(hp, next)
+	}
+
+	return dummy.Next
+}
+
+type Heap []*ListNode
+
+func (h Heap) Len() int {
+	return len(h)
+}
+func (h Heap) Less(i, j int) bool {
+	return h[i].Val < h[j].Val
+}
+func (h Heap) Swap(i, j int) {
+	h[i], h[j] = h[j], h[i]
+}
+func (h *Heap) Push(x any) {
+	*h = append(*h, x.(*ListNode))
+}
+func (h *Heap) Pop() any {
+	x := (*h)[len(*h)-1]
+	*h = (*h)[:len(*h)-1]
+	return x
 }
