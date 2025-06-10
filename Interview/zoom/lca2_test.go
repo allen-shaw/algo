@@ -1,5 +1,10 @@
 package zoom
 
+import (
+	"fmt"
+	"testing"
+)
+
 type TreeNode struct {
 	val         int
 	left, right *TreeNode
@@ -35,4 +40,10 @@ func lowestCommonAncestor2(root, p, q *TreeNode) *TreeNode {
 
 	dfs(root, p, q)
 	return lca
+}
+
+func Test_String(t *testing.T) {
+	a := "0123456789"
+	fmt.Println(a[:3])		// 012
+	fmt.Println(a[3:])		// 3456789
 }
