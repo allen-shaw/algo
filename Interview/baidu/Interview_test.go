@@ -1,40 +1,33 @@
 package baidu
 
 import (
-	"math"
-	"sort"
+	"fmt"
+	"testing"
 )
 
-func threeSum(nums []int, sum int) int {
-	sort.Ints(nums)
-	n := len(nums)
+func lcs(text1, text2 string) int {
+	m, n := len(text1), len(text2)
 
-	minAbs := math.MaxInt
-	maSum := 0
+	dp := make([][]int, m+1)
+	for i := range dp {
+		dp[i] = make([]int, n+1)
+	}
 
-	for i, num := range nums {
-		for j, k := i+1, n-1; j < k; {
-			s := num + nums[j] + nums[k]
-			if s == sum {
-				return s
-			} else if s < sum {
-				j++
-			} else if s > sum {
-				k--
-			}
-			if abs(s-sum) < minAbs {
-				minAbs = abs(s - sum)
-				maSum = s
+	for i := 1; i <= m; i++ {
+		for j := 1; j <= n; j++ {
+			if text1[i-1] == text2[j-1] {
+				dp[i][j] = dp[i-1][j-1] + 1
+			} else {
+				dp[i][j] = max(dp[i-1][j], dp[i][j-1])
 			}
 		}
 	}
 
-	return maSum
+	return dp[m][n]
 }
 
-func abs(x int) int {
-	if x < 0 {
-		return -x
-	}
-	return x
+func Test_lcs(t *testing.T) {
+	text1 := "abcde"
+	text2 := "afe"
+	fmt.Println(lcs(text1, text2))
 }
