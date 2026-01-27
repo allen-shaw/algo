@@ -2,7 +2,6 @@ package kody
 
 import (
 	"errors"
-	"text/tabwriter"
 )
 
 // 题目名称：设计并实现一个购物车系统
@@ -14,7 +13,7 @@ import (
 
 type Item struct {
 	quantity int64
-	price int64
+	price    int64
 }
 
 type UserCart struct {
@@ -34,7 +33,7 @@ func (c *Cart) AddItem(userID, itemID string, price int64, quantity int64) error
 	item, ok := user.items[itemID]
 	if !ok {
 		item = &Item{
-			price: price,
+			price:    price,
 			quantity: 0,
 		}
 		user.items[itemID] = item
@@ -43,7 +42,6 @@ func (c *Cart) AddItem(userID, itemID string, price int64, quantity int64) error
 	item.quantity += quantity
 	return nil
 }
-
 
 func (c *Cart) RemoveItem(userID, itemID string) error {
 	user, ok := c.users[userID]
@@ -61,13 +59,13 @@ func (c *Cart) UpdateQuantity(userID, itemID string, quantity int64) error {
 	}
 	item, ok := user.items[itemID]
 	if !ok {
-		return errors.New("item not existed")	
+		return errors.New("item not existed")
 	}
 	item.quantity = quantity
 	return nil
 }
 
-func (c *Cart) CalculateTotal(userID string) (int64,error) {
+func (c *Cart) CalculateTotal(userID string) (int64, error) {
 	user, ok := c.users[userID]
 	if !ok {
 		return 0, errors.New("user not existed")
